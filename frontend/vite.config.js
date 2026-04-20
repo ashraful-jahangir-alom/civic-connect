@@ -14,7 +14,8 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      'leaflet.heat': fileURLToPath(new URL('./src/vendor/leaflet-heat-wrf.js', import.meta.url))
     },
   },
 })

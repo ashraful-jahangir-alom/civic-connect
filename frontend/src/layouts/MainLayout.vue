@@ -38,6 +38,12 @@
                 class="text-text-light hover:text-primary px-3 py-2 font-medium transition-colors"
                 >Issues</router-link
               >
+              <router-link
+                to="/issues-map"
+                active-class="bg-primary/10 text-primary font-semibold rounded-lg"
+                class="text-text-light hover:text-primary px-3 py-2 font-medium transition-colors"
+                >Map</router-link
+              >
 
               <!-- Admin Links -->
               <template v-if="authStore.isAdmin">

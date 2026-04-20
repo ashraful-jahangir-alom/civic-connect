@@ -196,36 +196,98 @@
             Location
           </h3>
 
-          <!-- Location Text Input -->
+          <!-- Location Access + Search -->
           <div class="mb-4">
+            <button
+              type="button"
+              class="bg-primary hover:bg-primary/90 mb-3 inline-flex items-center rounded-lg px-4 py-2 text-sm font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:opacity-60"
+              :disabled="isLocating"
+              @click="allowLocationAccess"
+            >
+              <ArrowPathIcon v-if="isLocating" class="mr-2 h-4 w-4 animate-spin" />
+              {{ hasLocationPermission ? 'Refresh Current Location' : 'Allow Access to Location' }}
+            </button>
+
+            <p class="text-text-light mb-2 text-xs">
+              Location permission is required to report an issue near your current position.
+            </p>
+
             <label for="location" class="text-text mb-1 block text-sm font-medium"
               >Address or Landmark <span class="text-danger">*</span></label
             >
-            <input
-              type="text"
-              id="location"
-              v-model="form.location"
-              placeholder="e.g., Main St & 5th Ave, near City Hall"
-              class="focus:ring-primary/20 focus:border-primary w-full rounded-lg border-gray-200 bg-gray-50 px-4 py-2.5 transition-all outline-none focus:bg-white focus:ring-2"
-            />
+            <div class="relative">
+              <input
+                type="text"
+                id="location"
+                v-model="form.location"
+                placeholder="e.g., Mall Road, near bus stand"
+                class="focus:ring-primary/20 focus:border-primary w-full rounded-lg border-gray-200 bg-gray-50 px-4 py-2.5 transition-all outline-none focus:bg-white focus:ring-2 disabled:cursor-not-allowed disabled:opacity-60"
+                :disabled="!hasLocationPermission"
+                autocomplete="off"
+                @input="handleLocationInput"
+                @focus="handleLocationFocus"
+                @blur="handleLocationBlur"
+              />
+
+              <div
+                v-if="showLocationSuggestions"
+                class="absolute z-20 mt-1 max-h-64 w-full overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg"
+              >
+                <p v-if="isSearchingLocation" class="text-text-light px-4 py-3 text-sm">
+                  Searching locations...
+                </p>
+                <button
+                  v-for="suggestion in locationSuggestions"
+                  :key="suggestion.id"
+                  type="button"
+                  class="hover:bg-primary-light/20 w-full border-b border-gray-100 px-4 py-2 text-left text-sm text-gray-800 last:border-b-0"
+                  @mousedown.prevent="selectLocationSuggestion(suggestion)"
+                >
+                  {{ suggestion.label }}
+                </button>
+                <p
+                  v-if="!isSearchingLocation && locationSuggestions.length === 0"
+                  class="text-text-light px-4 py-3 text-sm"
+                >
+                  No India-based matches found near your location.
+                </p>
+              </div>
+            </div>
             <p v-if="errors.location" class="text-danger mt-1 text-xs">{{ errors.location }}</p>
             <p class="text-text-light mt-1 text-xs">
               <MapPinIcon class="mr-1 inline h-3 w-3" />
-              Provide a specific address or nearby landmark to help locate the issue
+              Suggestions are limited to India and filtered around your current location.
             </p>
           </div>
 
-          <div class="overflow-hidden rounded-xl border border-gray-200 shadow-sm">
+          <div
+            v-if="hasLocationPermission"
+            class="overflow-hidden rounded-xl border border-gray-200 shadow-sm"
+          >
             <div id="map" class="z-0 h-80 w-full"></div>
+          </div>
+          <div
+            v-else
+            class="text-text-light rounded-xl border border-dashed border-gray-300 bg-gray-50 p-5 text-sm"
+          >
+            Please allow location access to load the map.
           </div>
           <div class="mt-2 flex items-center justify-between text-sm">
             <p v-if="form.latitude" class="text-success flex items-center font-medium">
               <MapPinIcon class="mr-1 h-4 w-4" />
               Location selected: {{ form.latitude.toFixed(6) }}, {{ form.longitude.toFixed(6) }}
             </p>
+            <p
+              v-else-if="hasLocationPermission && currentLocation"
+              class="text-primary flex items-center font-medium"
+            >
+              <MapPinIcon class="mr-1 h-4 w-4" />
+              You are here: {{ currentLocation.latitude.toFixed(6) }},
+              {{ currentLocation.longitude.toFixed(6) }}
+            </p>
             <p v-else class="text-text-light flex items-center">
               <ExclamationCircleIcon class="mr-1 h-4 w-4" />
-              Tap on the map to pin the location
+              Allow location access to start selecting issue location
             </p>
           </div>
           <p v-if="error && error.includes('location')" class="text-danger mt-2 text-sm">
@@ -294,7 +356,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onBeforeUnmount, nextTick } from 'vue'
 import L from 'leaflet'
 import { useIssuesStore } from '../../stores/issuesStore'
 import { useRouter } from 'vue-router'
@@ -342,8 +404,20 @@ const isSubmitting = ref(false)
 const error = ref('')
 const successMessage = ref('')
 const fileInput = ref(null)
+const locationSuggestions = ref([])
+const isSearchingLocation = ref(false)
+const showLocationSuggestions = ref(false)
+const hasLocationPermission = ref(false)
+const isLocating = ref(false)
+const currentLocation = ref(null)
+const PROXIMITY_RADIUS_METERS = 200
 let map = null
 let marker = null
+let currentLocationMarker = null
+let currentAccuracyCircle = null
+let locationSearchTimeout = null
+let locationSearchAbortController = null
+const SEARCH_BOX_DELTA = 0.09
 
 const triggerFileInput = () => {
   fileInput.value.click()
@@ -398,6 +472,270 @@ const removeImage = () => {
 
 const errors = ref({})
 
+const setMapBoundaryForCurrentLocation = (lat, lng) => {
+  if (!map) return
+  map.attributionControl.setPrefix('Current Location')
+  map.setView([lat, lng], 16)
+  map.setMaxBounds([
+    [lat - SEARCH_BOX_DELTA, lng - SEARCH_BOX_DELTA],
+    [lat + SEARCH_BOX_DELTA, lng + SEARCH_BOX_DELTA],
+  ])
+}
+
+const updateCurrentLocationIndicator = (lat, lng, accuracy = 30) => {
+  if (!map) return
+
+  if (currentLocationMarker) {
+    map.removeLayer(currentLocationMarker)
+  }
+  if (currentAccuracyCircle) {
+    map.removeLayer(currentAccuracyCircle)
+  }
+
+  currentAccuracyCircle = L.circle([lat, lng], {
+    radius: Math.max(accuracy, 20),
+    color: '#3b82f6',
+    weight: 1,
+    opacity: 0.35,
+    fillColor: '#60a5fa',
+    fillOpacity: 0.15,
+  }).addTo(map)
+
+  currentLocationMarker = L.circleMarker([lat, lng], {
+    radius: 8,
+    color: '#ffffff',
+    weight: 3,
+    fillColor: '#2563eb',
+    fillOpacity: 1,
+  }).addTo(map)
+    .bindPopup('<strong>Your current location</strong>')
+}
+
+const placeMarker = (lat, lng, popupText = 'Selected Location') => {
+  if (!map) return
+
+  form.value.latitude = lat
+  form.value.longitude = lng
+
+  if (marker) {
+    map.removeLayer(marker)
+  }
+
+  marker = L.marker([lat, lng]).addTo(map).bindPopup(`<strong>${popupText}</strong>`).openPopup()
+  map.panTo([lat, lng])
+}
+
+const isPointNearCurrentLocation = (lat, lng) => {
+  if (!currentLocation.value) return false
+
+  const distanceInMeters = L.latLng(currentLocation.value.latitude, currentLocation.value.longitude).distanceTo(
+    L.latLng(lat, lng),
+  )
+
+  return distanceInMeters <= PROXIMITY_RADIUS_METERS
+}
+
+const rankAndFilterSuggestions = (results, query) => {
+  const normalizedQuery = query.toLowerCase().trim()
+  const queryParts = normalizedQuery.split(/\s+/).filter(Boolean)
+
+  const dedupe = new Set()
+  const filtered = results
+    .filter((entry) => {
+      const countryCode = entry?.address?.country_code || ''
+      return countryCode.toLowerCase() === 'in'
+    })
+    .map((entry) => {
+      const label = entry.display_name || ''
+      const lowerLabel = label.toLowerCase()
+      const queryMatchScore = queryParts.reduce((score, part) => {
+        return lowerLabel.includes(part) ? score + 1 : score
+      }, 0)
+      const importance = Number(entry.importance || 0)
+      const distance = currentLocation.value
+        ? L.latLng(currentLocation.value.latitude, currentLocation.value.longitude).distanceTo(
+            L.latLng(Number(entry.lat), Number(entry.lon)),
+          )
+        : Number.MAX_SAFE_INTEGER
+
+      return {
+        id: entry.place_id,
+        label,
+        latitude: Number(entry.lat),
+        longitude: Number(entry.lon),
+        score: queryMatchScore + importance - distance / PROXIMITY_RADIUS_METERS,
+      }
+    })
+    .filter((entry) => {
+      if (!Number.isFinite(entry.latitude) || !Number.isFinite(entry.longitude)) return false
+      if (!isPointNearCurrentLocation(entry.latitude, entry.longitude)) return false
+      if (dedupe.has(entry.label)) return false
+
+      dedupe.add(entry.label)
+      return true
+    })
+    .sort((a, b) => b.score - a.score)
+
+  return filtered.slice(0, 8)
+}
+
+const fetchLocationSuggestions = async (query) => {
+  if (!currentLocation.value) return
+
+  const { latitude, longitude } = currentLocation.value
+  const minLat = latitude - SEARCH_BOX_DELTA
+  const maxLat = latitude + SEARCH_BOX_DELTA
+  const minLng = longitude - SEARCH_BOX_DELTA
+  const maxLng = longitude + SEARCH_BOX_DELTA
+  const viewBox = `${minLng},${maxLat},${maxLng},${minLat}`
+
+  if (locationSearchAbortController) {
+    locationSearchAbortController.abort()
+  }
+
+  locationSearchAbortController = new AbortController()
+  isSearchingLocation.value = true
+
+  try {
+    const searchQuery = `${query}, India`
+    const url =
+      `https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&countrycodes=in&bounded=1&limit=20&viewbox=${encodeURIComponent(viewBox)}&q=${encodeURIComponent(searchQuery)}`
+
+    const response = await fetch(url, {
+      signal: locationSearchAbortController.signal,
+      headers: {
+        Accept: 'application/json',
+      },
+    })
+
+    if (!response.ok) {
+      throw new Error('Location service unavailable')
+    }
+
+    const data = await response.json()
+    locationSuggestions.value = rankAndFilterSuggestions(Array.isArray(data) ? data : [], query)
+    showLocationSuggestions.value = true
+  } catch (fetchError) {
+    if (fetchError.name !== 'AbortError') {
+      locationSuggestions.value = []
+    }
+  } finally {
+    isSearchingLocation.value = false
+  }
+}
+
+const handleLocationInput = () => {
+  if (!hasLocationPermission.value || !currentLocation.value) {
+    error.value = 'Please allow location access first.'
+    return
+  }
+
+  error.value = ''
+  const query = form.value.location.trim()
+
+  if (locationSearchTimeout) {
+    clearTimeout(locationSearchTimeout)
+  }
+
+  if (query.length < 3) {
+    locationSuggestions.value = []
+    showLocationSuggestions.value = false
+    return
+  }
+
+  locationSearchTimeout = setTimeout(() => {
+    fetchLocationSuggestions(query)
+  }, 300)
+}
+
+const handleLocationFocus = () => {
+  if (locationSuggestions.value.length > 0 || isSearchingLocation.value) {
+    showLocationSuggestions.value = true
+  }
+}
+
+const handleLocationBlur = () => {
+  setTimeout(() => {
+    showLocationSuggestions.value = false
+  }, 120)
+}
+
+const selectLocationSuggestion = (suggestion) => {
+  if (!isPointNearCurrentLocation(suggestion.latitude, suggestion.longitude)) {
+    error.value = 'Please select a location within 200 meters of your current positon.'
+    return
+  }
+
+  form.value.location = suggestion.label
+  showLocationSuggestions.value = false
+  error.value = ''
+  placeMarker(suggestion.latitude, suggestion.longitude, 'Selected Location')
+  if (map) {
+    map.setView([suggestion.latitude, suggestion.longitude], 16)
+  }
+}
+
+const reverseGeocode = async (lat, lng) => {
+  try {
+    const url =
+      `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lng)}&zoom=18&addressdetails=1`
+    const response = await fetch(url)
+    if (!response.ok) return
+
+    const data = await response.json()
+    const countryCode = data?.address?.country_code || ''
+    if (countryCode.toLowerCase() === 'in' && data?.display_name) {
+      form.value.location = data.display_name
+    }
+  } catch {
+    // Reverse geocoding is best-effort and should not block form usage.
+  }
+}
+
+const allowLocationAccess = async () => {
+  if (!navigator.geolocation) {
+    error.value = 'Geolocation is not supported by your browser.'
+    return
+  }
+
+  isLocating.value = true
+  error.value = ''
+
+  navigator.geolocation.getCurrentPosition(
+    async (position) => {
+      const latitude = position.coords.latitude
+      const longitude = position.coords.longitude
+      const accuracy = position.coords.accuracy || 30
+
+      currentLocation.value = { latitude, longitude, accuracy }
+      hasLocationPermission.value = true
+
+      await nextTick()
+
+      if (!map) {
+        initMap()
+      } else {
+        setMapBoundaryForCurrentLocation(latitude, longitude)
+        updateCurrentLocationIndicator(latitude, longitude, accuracy)
+      }
+
+      placeMarker(latitude, longitude, 'Selected Issue Location')
+      await reverseGeocode(latitude, longitude)
+      isLocating.value = false
+    },
+    () => {
+      isLocating.value = false
+      hasLocationPermission.value = false
+      error.value = 'Location permission denied. Please allow access to continue.'
+    },
+    {
+      enableHighAccuracy: true,
+      timeout: 15000,
+      maximumAge: 0,
+    },
+  )
+}
+
 const validateForm = () => {
   errors.value = {}
   let isValid = true
@@ -419,25 +757,30 @@ const validateForm = () => {
     isValid = false
   }
 
+  if (!hasLocationPermission.value || !currentLocation.value) {
+    errors.value.location = 'Allow location access to continue'
+    isValid = false
+  }
+
+  if (
+    form.value.latitude &&
+    form.value.longitude &&
+    !isPointNearCurrentLocation(form.value.latitude, form.value.longitude)
+  ) {
+    errors.value.location = 'Please select a location within 200 meters of your current positon.'
+    isValid = false
+  }
+
   return isValid
 }
 
 const initMap = () => {
-  // Ludhiana, Punjab coordinates
-  const ludhianaCenterLat = 30.900965
-  const ludhianaCenterLng = 75.857277
-  const ludhianaBounds = [
-    [30.78, 75.74], // Southwest
-    [31.02, 75.97], // Northeast
-  ]
+  if (!currentLocation.value) return
 
-  map = L.map('map').setView([ludhianaCenterLat, ludhianaCenterLng], 13)
-  map.attributionControl.setPrefix('Ludhiana')
+  const { latitude, longitude, accuracy } = currentLocation.value
 
-  map.setMaxBounds([
-    [30.76, 75.72],
-    [31.04, 75.99],
-  ])
+  map = L.map('map').setView([latitude, longitude], 16)
+  map.attributionControl.setPrefix('Current Location')
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors',
@@ -445,38 +788,20 @@ const initMap = () => {
     minZoom: 11,
   }).addTo(map)
 
-  L.rectangle(ludhianaBounds, {
-    color: '#047857', // Primary color
-    weight: 2,
-    opacity: 0.3,
-    fillColor: '#10b981', // Accent color
-    fillOpacity: 0.05,
-  }).addTo(map)
+  setMapBoundaryForCurrentLocation(latitude, longitude)
+  updateCurrentLocationIndicator(latitude, longitude, accuracy)
 
-  map.on('click', (event) => {
+  map.on('click', async (event) => {
     const { lat, lng } = event.latlng
 
-    if (
-      lat >= ludhianaBounds[0][0] &&
-      lat <= ludhianaBounds[1][0] &&
-      lng >= ludhianaBounds[0][1] &&
-      lng <= ludhianaBounds[1][1]
-    ) {
-      form.value.latitude = lat
-      form.value.longitude = lng
-      error.value = '' // Clear location error if any
-
-      if (marker) {
-        map.removeLayer(marker)
-      }
-
-      marker = L.marker([lat, lng])
-        .addTo(map)
-        .bindPopup(`<strong>Selected Location</strong>`)
-        .openPopup()
-    } else {
-      error.value = 'Please select a location within Ludhiana'
+    if (!isPointNearCurrentLocation(lat, lng)) {
+      error.value = 'Please select a location within 200 meters of your current positon.'
+      return
     }
+
+    error.value = ''
+    placeMarker(lat, lng)
+    await reverseGeocode(lat, lng)
   })
 }
 
@@ -492,6 +817,16 @@ const submitIssue = async () => {
 
   if (!form.value.latitude || !form.value.longitude) {
     error.value = 'Please pin the location on the map.'
+    return
+  }
+
+  if (!hasLocationPermission.value || !currentLocation.value) {
+    error.value = 'Please allow location access first.'
+    return
+  }
+
+  if (!isPointNearCurrentLocation(form.value.latitude, form.value.longitude)) {
+    error.value = 'Please select a location within 200 meters of your current positon.'
     return
   }
 
@@ -538,8 +873,22 @@ const submitIssue = async () => {
   }
 }
 
-onMounted(() => {
-  initMap()
+onBeforeUnmount(() => {
+  if (locationSearchTimeout) {
+    clearTimeout(locationSearchTimeout)
+  }
+
+  if (locationSearchAbortController) {
+    locationSearchAbortController.abort()
+  }
+
+  if (map) {
+    map.remove()
+    map = null
+  }
+
+  currentLocationMarker = null
+  currentAccuracyCircle = null
 })
 </script>
 

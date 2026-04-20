@@ -55,6 +55,12 @@ const routes = [
     meta: { guard: 'CITIZEN', title: 'Issues' },
   },
   {
+    path: '/issues-map',
+    name: 'issuesMap',
+    component: () => import('../views/citizen/IssuesMapPage.vue'),
+    meta: { guard: 'CITIZEN', title: 'Issues Map' },
+  },
+  {
     path: '/issues/:id',
     name: 'issueDetail',
     component: () => import('../views/citizen/IssueDetailPage.vue'),
