@@ -345,7 +345,7 @@ let reverseGeocodeTimer = null
 let lastReverseGeocodeLatLng = null
 let weakGpsFallbackApplied = false
 
-const GPS_ACCURACY_TARGET_METERS = 200
+const GPS_ACCURACY_TARGET_METERS = 500
 
 const locationSourceLabel = computed(() => {
   if (!currentLocation.value?.source || currentLocation.value.source === 'gps') {

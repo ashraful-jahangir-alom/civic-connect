@@ -15,6 +15,20 @@ class IssueController {
         $this->pdo = $pdo;
     }
 
+    private function getUserRole($user_id) {
+        $stmt = $this->pdo->prepare("SELECT role FROM users WHERE id = ?");
+        $stmt->execute([$user_id]);
+        return $stmt->fetchColumn() ?: null;
+    }
+
+    private function isIssueAssignedToUser($issue_id, $user_id) {
+        $stmt = $this->pdo->prepare("SELECT assigned_to FROM issues WHERE id = ?");
+        $stmt->execute([$issue_id]);
+        $assigned_to = $stmt->fetchColumn();
+
+        return $assigned_to !== false && (string)$assigned_to === (string)$user_id;
+    }
+
     /**
      * Detect pothole from an uploaded image before full issue submission.
      * POST /api/issues/detect-image
@@ -272,6 +286,11 @@ class IssueController {
                 sendError('Issue not found', 404);
             }
 
+            $user_role = $current_user ? $this->getUserRole($current_user['user_id']) : null;
+            if ($user_role === 'staff' && !$this->isIssueAssignedToUser($issue_id, $current_user['user_id'])) {
+                sendError('Issue not found', 404);
+            }
+
             // Check if current user has upvoted
             $user_has_upvoted = false;
             if ($current_user) {
@@ -335,6 +354,7 @@ class IssueController {
 
         // Try to get current user if authenticated (optional)
         $current_user = Middleware::authenticate();
+        $current_user_role = $current_user ? $this->getUserRole($current_user['user_id']) : null;
 
         // Get query parameters
         $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
@@ -380,18 +400,11 @@ class IssueController {
                 $params[] = $search_term;
             }
 
-            // Filter for issues assigned to current user
-            if ($assigned_to_me && $current_user) {
-                $where[] = "i.id IN (
-                    SELECT issue_id FROM issue_updates 
-                    WHERE user_id = ? AND update_type = 'assigned'
-                    AND (created_at, id) = (
-                        SELECT MAX(created_at), MAX(id) 
-                        FROM issue_updates iu2 
-                        WHERE iu2.issue_id = issue_updates.issue_id 
-                        AND iu2.update_type = 'assigned'
-                    )
-                )";
+            $force_assigned_to_me = $current_user && $current_user_role === 'staff';
+
+            // Staff users can only see issues assigned to their own account.
+            if (($assigned_to_me || $force_assigned_to_me) && $current_user) {
+                $where[] = 'i.assigned_to = ?';
                 $params[] = $current_user['user_id'];
             }
 
@@ -532,6 +545,10 @@ class IssueController {
             $stmt = $this->pdo->prepare("SELECT role FROM users WHERE id = ?");
             $stmt->execute([$user['user_id']]);
             $user_role = $stmt->fetchColumn();
+
+            if ($user_role === 'staff' && !$this->isIssueAssignedToUser($issue_id, $user['user_id'])) {
+                sendError('Unauthorized: Cannot update issues assigned to another staff member', 403);
+            }
 
             if (!Middleware::ownsResource($user['user_id'], $issue['user_id']) && !in_array($user_role, ['admin', 'staff'])) {
                 sendError('Unauthorized: Cannot update other user\'s issues', 403);
@@ -723,6 +740,10 @@ class IssueController {
             $stmt = $this->pdo->prepare("SELECT role FROM users WHERE id = ?");
             $stmt->execute([$user['user_id']]);
             $user_role = $stmt->fetchColumn();
+
+            if ($user_role === 'staff' && !$this->isIssueAssignedToUser($issue_id, $user['user_id'])) {
+                sendError('Unauthorized: Cannot delete issues assigned to another staff member', 403);
+            }
 
             if (!Middleware::ownsResource($user['user_id'], $issue['user_id']) && !in_array($user_role, ['admin', 'staff'])) {
                 sendError('Unauthorized: Cannot delete other user\'s issues', 403);

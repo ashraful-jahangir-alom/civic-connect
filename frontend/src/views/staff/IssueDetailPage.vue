@@ -437,10 +437,25 @@ const fetchIssue = async () => {
   isLoading.value = true
   error.value = ''
   try {
-    issue.value = await issuesStore.fetchIssueById(route.params.id)
+    const token = localStorage.getItem('token')
+    const headers = {}
+    if (token) {
+      headers.Authorization = `Bearer ${token}`
+    }
+
+    const response = await axios.get(`${API_BASE_URL}/issues/${route.params.id}`, {
+      headers,
+    })
+
+    issue.value = response.data?.issue || null
     setTimeout(initMap, 100)
   } catch (err) {
-    error.value = 'Failed to load issue details.'
+    const status = err?.response?.status
+    if (status === 403 || status === 404) {
+      error.value = 'This issue is not assigned to your account.'
+    } else {
+      error.value = 'Failed to load issue details.'
+    }
     console.error(err)
   } finally {
     isLoading.value = false
@@ -517,7 +532,7 @@ const assignStaff = async () => {
   isAssigningStaff.value = true
   try {
     await issuesStore.updateIssue(issue.value.id, { assigned_staff_id: selectedStaff.value.id })
-    issue.value = await issuesStore.fetchIssueById(route.params.id)
+    await fetchIssue()
     toast.success(
       `Issue assigned to ${selectedStaff.value.first_name} ${selectedStaff.value.last_name}`,
     )
