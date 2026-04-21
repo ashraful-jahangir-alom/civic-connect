@@ -1,7 +1,7 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 pb-12">
+  <div class="min-h-screen">
     <!-- Header with Welcome -->
-    <div class="border-b border-gray-200 bg-white/80 backdrop-blur-sm">
+    <div class="border-b border-gray-200 bg-[#65CCB8] backdrop-blur-sm">
       <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div class="flex items-end justify-between gap-4">
           <div>
@@ -24,11 +24,11 @@
     </div>
 
     <!-- Main Content -->
-    <div class="mx-auto mt-8 max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="mx-auto  bg-[#65CCB8] max-w-7xl px-4 sm:px-6 lg:px-8">
       <!-- Assigned Issues Overview Grid -->
       <div class="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         <!-- Total Assigned -->
-        <div class="group overflow-hidden rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 p-6 text-white shadow-md transition-shadow hover:shadow-lg">
+        <div class="group overflow-hidden rounded-xl bg-[#0055FF] p-6 text-white shadow-md transition-shadow hover:shadow-lg">
           <div class="flex items-center justify-between">
             <div>
               <p class="text-sm font-medium text-blue-100">Total Assigned</p>
@@ -87,7 +87,7 @@
       <!-- Performance & Analytics Row -->
       <div class="mb-8 grid grid-cols-1 gap-4 md:grid-cols-3">
         <!-- Completion Rate -->
-        <div class="rounded-xl bg-white p-6 shadow-md ring-1 ring-gray-200">
+        <div class="rounded-xl  bg-[linear-gradient(135deg,rgba(255,255,255,0.72),rgba(255,253,247,0.18))] p-6 shadow-md ring-1 ring-gray-200">
           <div class="flex items-start justify-between">
             <div>
               <p class="text-sm font-medium text-gray-600">Completion Rate</p>
@@ -111,7 +111,7 @@
         </div>
 
         <!-- Average Response Time (Mock) -->
-        <div class="rounded-xl bg-white p-6 shadow-md ring-1 ring-gray-200">
+        <div class="rounded-xl  bg-[linear-gradient(135deg,rgba(255,255,255,0.72),rgba(255,253,247,0.18))] p-6 shadow-md ring-1 ring-gray-200">
           <div class="flex items-start justify-between">
             <div>
               <p class="text-sm font-medium text-gray-600">Avg Response Time</p>
@@ -128,7 +128,7 @@
         </div>
 
         <!-- Pending Actions (Critical) -->
-        <div class="rounded-xl bg-white p-6 shadow-md ring-1 ring-gray-200">
+        <div class="rounded-xl  bg-[linear-gradient(135deg,rgba(255,255,255,0.72),rgba(255,253,247,0.18))] p-6 shadow-md ring-1 ring-gray-200">
           <div class="flex items-start justify-between">
             <div>
               <p class="text-sm font-medium text-gray-600">Urgent Action</p>
@@ -146,9 +146,9 @@
       </div>
 
       <!-- Assigned Issues Section -->
-      <div class="rounded-xl bg-white shadow-md ring-1 ring-gray-200">
+      <div class="rounded-xl  bg-[linear-gradient(135deg,rgba(255,255,255,0.72),rgba(255,253,247,0.18))]">
         <!-- Section Header -->
-        <div class="border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-5">
+        <div class="border-b border-gray-200  bg-[linear-gradient(135deg,rgba(255,255,255,0.72),rgba(255,253,247,0.18))] px-6 py-5">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
               <div class="rounded-lg bg-blue-100 p-2">
@@ -167,7 +167,7 @@
         </div>
 
         <!-- Filters Section -->
-        <div class="border-b border-gray-200 bg-gray-50 px-6 py-4">
+        <div class="border-b border-gray-200  bg-[linear-gradient(135deg,rgba(255,255,255,0.72),rgba(255,253,247,0.18))] px-6 py-4">
           <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-3">
               <!-- Search -->
@@ -205,7 +205,7 @@
                   'rounded-full px-3 py-1.5 text-sm font-medium transition-colors',
                   activeStatusFilter === status.value
                     ? 'bg-blue-600 text-white shadow-sm'
-                    : 'bg-white text-gray-600 border border-gray-300 hover:bg-gray-50',
+                    : 'bg-white text-gray-600 border border-gray-300',
                 ]"
               >
                 {{ status.label }}
@@ -239,7 +239,7 @@
           <div
             v-for="issue in filteredAssignedIssues"
             :key="issue.id"
-            class="group flex flex-col gap-3 border-b border-gray-100 p-6 transition-colors hover:bg-gray-50 last:border-b-0 md:flex-row md:items-center md:justify-between"
+            class="group flex flex-col gap-3 border-b border-gray-100 p-6 transition-colors last:border-b-0 md:flex-row md:items-center md:justify-between"
           >
             <!-- Left side: Issue Info -->
             <div class="flex-1 min-w-0">
@@ -314,7 +314,7 @@
       </div>
 
       <!-- Footer Stats -->
-      <div class="mt-8 rounded-xl bg-white px-6 py-4 shadow-md ring-1 ring-gray-200">
+      <div class="mt-8 rounded-xl  bg-[linear-gradient(135deg,rgba(255,255,255,0.72),rgba(255,253,247,0.18))] px-6 py-4 shadow-md ring-1 ring-gray-200">
         <div class="flex flex-col gap-2 text-xs text-gray-600 sm:flex-row sm:items-center sm:justify-between">
           <div>
             Showing <span class="font-semibold text-gray-900">{{ filteredAssignedIssues.length }}</span> of 

@@ -47,9 +47,9 @@
           <div
             class="absolute top-0 left-0 h-full w-1.5 opacity-80"
             :class="{
-              'bg-gold-600 shadow-[0_0_10px_rgba(212,175,55,0.5)]':
+              'bg-gold-600 shadow-[0_0_10px_rgba(87,186,152,0.5)]':
                 issue.status === 'pending_review',
-              'bg-saffron-500 shadow-[0_0_10px_rgba(236,72,153,0.5)]': issue.status === 'in_progress',
+              'bg-saffron-500 shadow-[0_0_10px_rgba(101,204,184,0.5)]': issue.status === 'in_progress',
               'bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]': issue.status === 'resolved',
             }"
           ></div>

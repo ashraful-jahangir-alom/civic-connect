@@ -1,7 +1,7 @@
 <template>
   <div class="animate-fade-in-up mx-auto max-w-full px-0 py-0">
     <!-- Header -->
-    <div class="border-b border-gold-200 bg-white px-4 py-4 shadow-sm md:px-6">
+    <div class="border-b border-gold-200  bg-[#65CCB8] px-4 py-4 shadow-sm md:px-6">
       <router-link
         to="/issues"
         class="text-text-light hover:text-primary group mb-3 inline-flex items-center gap-2 font-medium transition-colors"
@@ -264,8 +264,8 @@
     </div>
 
     <!-- Permission Denied State -->
-    <div v-else class="flex items-center justify-center bg-cream-50 py-20">
-      <div class="max-w-md rounded-xl bg-white p-8 text-center shadow-sm">
+    <div v-else class="flex items-center justify-center  bg-[#65CCB8] py-20">
+      <div class="max-w-md rounded-xl  bg-[linear-gradient(135deg,rgba(255,255,255,0.72),rgba(255,253,247,0.18))] p-8 text-center shadow-sm">
         <MapPinIcon class="text-text-light mx-auto mb-4 h-12 w-12 opacity-50" />
         <h2 class="text-text mb-2 text-xl font-bold">Location Access Required</h2>
         <p class="text-text-light mb-6 text-sm">

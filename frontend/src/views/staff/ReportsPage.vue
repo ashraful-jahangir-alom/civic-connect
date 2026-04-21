@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-cream-50 pb-12">
     <!-- Header -->
     <div class="bg-white shadow-sm border-b border-gold-200/60">
-      <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+      <div class="mx-auto bg-[#65CCB8] max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between">
           <div>
             <h1 class="text-2xl font-bold text-slate-900">Reports & Analytics</h1>
@@ -26,7 +26,7 @@
     </div>
 
     <!-- Main Content -->
-    <div class="motion-preset-fade mx-auto mt-8 max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="motion-preset-fade bg-[#65CCB8] mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <!-- Loading State -->
       <div
         v-if="issuesStore.isLoading && !issuesStore.issues.length"
@@ -43,7 +43,7 @@
         <div class="mb-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           <!-- Total Issues -->
           <div
-            class="motion-preset-slide-up-sm motion-delay-75 overflow-hidden rounded-xl bg-white p-6 shadow-sm border border-gold-200/50"
+            class="bg-[#0099FF] motion-preset-slide-up-sm motion-delay-75 overflow-hidden rounded-xl p-6 shadow-sm border border-gold-200/50"
           >
             <div class="flex items-center gap-4">
               <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-gold-100">
@@ -58,7 +58,7 @@
 
           <!-- Resolution Rate -->
           <div
-            class="motion-preset-slide-up-sm motion-delay-100 overflow-hidden rounded-xl bg-white p-6 shadow-sm border border-gold-200/50"
+            class="motion-preset-slide-up-sm motion-delay-100 bg-gradient-to-br from-red-500 to-red-600 overflow-hidden rounded-xl bg-white p-6 shadow-sm border border-gold-200/50"
           >
             <div class="flex items-center gap-4">
               <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-green-50">
@@ -73,7 +73,7 @@
 
           <!-- Pending Issues -->
           <div
-            class="motion-preset-slide-up-sm motion-delay-150 overflow-hidden rounded-xl bg-white p-6 shadow-sm border border-gold-200/50"
+            class="motion-preset-slide-up-sm motion-delay-150  bg-gradient-to-br from-amber-500 to-amber-600 overflow-hidden rounded-xl bg-white p-6 shadow-sm border border-gold-200/50"
           >
             <div class="flex items-center gap-4">
               <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-gold-100">
@@ -88,7 +88,7 @@
 
           <!-- In Progress -->
           <div
-            class="motion-preset-slide-up-sm motion-delay-200 overflow-hidden rounded-xl bg-white p-6 shadow-sm border border-gold-200/50"
+            class="motion-preset-slide-up-sm motion-delay-200  bg-gradient-to-br from-green-500 to-green-600 overflow-hidden rounded-xl bg-white p-6 shadow-sm border border-gold-200/50"
           >
             <div class="flex items-center gap-4">
               <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-saffron-100">
@@ -106,7 +106,7 @@
         <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <!-- Issues by Status Chart -->
           <div
-            class="motion-preset-slide-up-sm motion-delay-300 overflow-hidden rounded-xl bg-white p-6 shadow-sm border border-gold-200/50"
+            class="motion-preset-slide-up-sm motion-delay-300 overflow-hidden rounded-xl  bg-[linear-gradient(135deg,rgba(255,255,255,0.72),rgba(255,253,247,0.18))] p-6 shadow-sm border border-gold-200/50"
           >
             <h3 class="mb-4 text-lg font-semibold text-slate-900">Issues by Status</h3>
             <div class="flex items-center justify-center" style="height: 300px">
@@ -117,7 +117,7 @@
 
           <!-- Issues by Category Chart -->
           <div
-            class="motion-preset-slide-up-sm motion-delay-400 overflow-hidden rounded-xl bg-white p-6 shadow-sm border border-gold-200/50"
+            class="motion-preset-slide-up-sm motion-delay-400 overflow-hidden rounded-xl  bg-[linear-gradient(135deg,rgba(255,255,255,0.72),rgba(255,253,247,0.18))] p-6 shadow-sm border border-gold-200/50"
           >
             <h3 class="mb-4 text-lg font-semibold text-slate-900">Issues by Category</h3>
             <div class="flex items-center justify-center" style="height: 300px">
@@ -128,7 +128,7 @@
 
           <!-- Issues Timeline Chart -->
           <div
-            class="motion-preset-slide-up-sm motion-delay-500 col-span-1 overflow-hidden rounded-xl bg-white p-6 shadow-sm border border-gold-200/50 lg:col-span-2"
+            class="motion-preset-slide-up-sm motion-delay-500 col-span-1 overflow-hidden rounded-xl  bg-[linear-gradient(135deg,rgba(255,255,255,0.72),rgba(255,253,247,0.18))] p-6 shadow-sm border border-gold-200/50 lg:col-span-2"
           >
             <h3 class="mb-4 text-lg font-semibold text-slate-900">Issues Timeline (Last 30 Days)</h3>
             <div class="flex items-center justify-center" style="height: 300px">

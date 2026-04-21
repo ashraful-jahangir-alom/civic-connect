@@ -1,10 +1,10 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-cream-50 to-cream-100">
-    <div class="mx-auto max-w-4xl px-4 py-8">
+  <div class="w-full bg-[#65CCB8]">
+    <div class="mx-auto px-4 py-8 sm:px-6 lg:px-8 xl:px-10 bg-[#65CCB8]">
       <!-- Back Button -->
       <router-link
         to="/issues"
-        class="mb-6 inline-flex items-center gap-2 font-semibold text-gold-700 hover:underline"
+        class="mb-6 inline-flex items-center gap-2 font-semibold text-dark-700 hover:underline"
       >
         <ArrowLeftIcon class="h-5 w-5" />
         Back to Issues
@@ -13,9 +13,9 @@
       <!-- Loading State -->
       <div
         v-if="isLoading"
-        class="flex flex-col items-center rounded-xl bg-white p-12 text-center shadow-md border border-gold-200/50"
+        class="flex flex-col items-center rounded-xl bg-white p-12 text-center shadow-md border border-dark-200/50"
       >
-        <ArrowPathIcon class="h-8 w-8 animate-spin text-gold-600" />
+        <ArrowPathIcon class="h-8 w-8 animate-spin text-dark-600" />
         <p class="mt-4 text-slate-600">Loading issue details...</p>
       </div>
 
@@ -27,7 +27,7 @@
         </p>
         <router-link
           to="/issues"
-          class="mt-4 inline-block font-semibold text-gold-700 hover:underline"
+          class="mt-4 inline-block font-semibold text-dark-700 hover:underline"
         >
           Return to issues list
         </router-link>
@@ -36,7 +36,7 @@
       <!-- Issue Details -->
       <div v-else-if="issue">
         <!-- Header Card -->
-        <div class="mb-6 overflow-hidden rounded-xl bg-white shadow-md border border-gold-200/50">
+        <div class="mb-6 overflow-hidden rounded-xl  bg-[linear-gradient(135deg,rgba(255,255,255,0.72),rgba(255,253,247,0.18))] shadow-md border border-dark-200/50">
           <!-- Issue Image -->
           <div
             v-if="issue.image_url"
@@ -59,7 +59,7 @@
                   <!-- Status Badge -->
                   <div
                     :class="{
-                      'bg-gold-100 text-gold-800': issue.status === 'pending_review',
+                      'bg-dark-100 text-dark-800': issue.status === 'pending_review',
                       'bg-saffron-100 text-saffron-800': issue.status === 'in_progress',
                       'bg-green-100 text-green-800': issue.status === 'resolved',
                     }"
@@ -70,7 +70,7 @@
 
                   <!-- Category -->
                   <span class="flex items-center gap-2 text-slate-600">
-                    <TagIcon class="h-4 w-4 text-gold-600" />
+                    <TagIcon class="h-4 w-4 text-dark-600" />
                     {{ formatCategory(issue.category) }}
                   </span>
 
@@ -78,7 +78,7 @@
                   <span
                     :class="{
                       'text-saffron-600': issue.priority === 'high',
-                      'text-gold-600': issue.priority === 'medium',
+                      'text-dark-600': issue.priority === 'medium',
                       'text-slate-600': issue.priority === 'low',
                     }"
                     class="flex items-center font-semibold"
@@ -94,13 +94,20 @@
                 <button
                   @click="toggleUpvote"
                   :class="{
-                    'bg-gold-600 text-white': issue.user_has_upvoted,
-                    'bg-gold-100 text-gold-700': !issue.user_has_upvoted,
+                    'bg-dark-600 text-white': issue.user_has_upvoted,
+                    'bg-dark-100 text-dark-700': !issue.user_has_upvoted,
                   }"
-                  class="flex items-center justify-center gap-2 rounded-lg px-6 py-2 font-semibold transition-colors hover:bg-gold-600 hover:text-white"
+                  class="flex items-center justify-center gap-2 rounded-lg px-6 py-2 font-semibold transition-colors hover:bg-dark-600 hover:text-white"
                 >
                   <HandThumbUpIcon class="h-5 w-5" />
                   Vote ({{ issue.upvote_count || 0 }})
+                </button>
+                <button
+                  v-if="issue.status === 'resolved' && issue.proof_image_url"
+                  @click="showProofModal = true"
+                  class="flex items-center justify-center gap-2 rounded-lg bg-gray-200 px-6 py-2 font-semibold text-[#10141f] transition-colors hover:bg-gray-300"
+                >
+                  📋 View Proof
                 </button>
                 <button
                   v-if="canDeleteIssue"
@@ -115,12 +122,12 @@
             </div>
 
             <!-- Meta Information -->
-            <div class="mt-6 grid grid-cols-1 gap-4 border-t border-gold-200 pt-6 md:grid-cols-3">
+            <div class="mt-6 grid grid-cols-1 gap-4 border-t border-dark-200 pt-6 md:grid-cols-3">
               <div>
                 <p class="text-sm text-slate-600">Reported by</p>
                 <router-link
                   :to="`/profile/${issue.user_id}`"
-                  class="font-semibold text-gold-700 transition-colors hover:text-gold-900 hover:underline"
+                  class="font-semibold text-dark-700 transition-colors hover:text-dark-900 hover:underline"
                 >
                   {{ issue.user_name }}
                 </router-link>
@@ -136,9 +143,9 @@
             </div>
 
             <!-- Assigned Staff Information -->
-            <div v-if="issue.assigned_staff_id" class="mt-6 border-t border-gold-200 pt-6">
+            <div v-if="issue.assigned_staff_id" class="mt-6 border-t border-dark-200 pt-6">
               <h3 class="mb-3 text-lg font-bold text-slate-900">Assigned Staff</h3>
-              <div class="rounded-lg bg-gradient-to-r from-gold-100/40 to-saffron-100/40 p-4 border border-gold-200/50">
+              <div class="rounded-lg bg-gradient-to-r from-dark-100/40 to-saffron-100/40 p-4 border border-dark-200/50">
                 <div class="flex flex-col gap-3">
                   <div>
                     <p class="text-sm text-slate-600">Name</p>
@@ -146,7 +153,7 @@
                   </div>
                   <div>
                     <p class="text-sm text-slate-600">Email</p>
-                    <a :href="`mailto:${issue.assigned_staff_email}`" class="font-semibold text-gold-700 transition-colors hover:text-gold-900 hover:underline">
+                    <a :href="`mailto:${issue.assigned_staff_email}`" class="font-semibold text-dark-700 transition-colors hover:text-dark-900 hover:underline">
                       {{ issue.assigned_staff_email }}
                     </a>
                   </div>
@@ -157,7 +164,7 @@
         </div>
 
         <!-- Description -->
-        <div class="mb-6 rounded-xl bg-white p-8 shadow-md">
+        <div class="mb-6 rounded-xl  bg-[linear-gradient(135deg,rgba(255,255,255,0.72),rgba(255,253,247,0.18))] p-8 shadow-md">
           <h2 class="mb-4 text-2xl font-bold text-slate-900">Description</h2>
           <p class="leading-relaxed whitespace-pre-wrap text-slate-700">{{ issue.description }}</p>
         </div>
@@ -165,11 +172,11 @@
         <!-- Location -->
         <div
           v-if="issue.latitude && issue.longitude"
-          class="mb-6 rounded-xl bg-white p-8 shadow-md"
+          class="mb-6 rounded-xl  bg-[linear-gradient(135deg,rgba(255,255,255,0.72),rgba(255,253,247,0.18))] p-8 shadow-md"
         >
           <h2 class="mb-4 text-2xl font-bold text-slate-900">Location</h2>
           <p v-if="issue.location" class="mb-2 flex items-start text-slate-700">
-            <MapPinIcon class="mt-0.5 mr-2 inline h-5 w-5 flex-shrink-0 text-gold-700" />
+            <MapPinIcon class="mt-0.5 mr-2 inline h-5 w-5 flex-shrink-0 text-dark-700" />
             <span class="font-semibold">{{ issue.location }}</span>
           </p>
           <p class="mb-4 flex items-center text-sm text-slate-600">
@@ -177,12 +184,52 @@
               >Coordinates: {{ issue.latitude.toFixed(6) }}, {{ issue.longitude.toFixed(6) }}</span
             >
           </p>
-          <div id="issue-map" class="h-64 rounded-lg border border-gold-200"></div>
+          <div id="issue-map" class="h-64 rounded-lg border border-dark-200"></div>
         </div>
       </div>
     </div>
   </div>
   <ImageModal :image-url="selectedImage" :alt="issue?.title" @close="selectedImage = null" />
+  <ImageModal :image-url="selectedImage" :alt="issue?.title" @close="selectedImage = null" />
+
+  <!-- Proof Modal -->
+  <div
+    v-if="showProofModal && issue && issue.status === 'resolved'"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+  >
+    <div class="max-w-md rounded-lg bg-white p-6 shadow-lg">
+      <div class="mb-4 flex items-center justify-between">
+        <h2 class="text-2xl font-bold">Resolution Proof</h2>
+        <button @click="showProofModal = false" class="text-gray-500 hover:text-gray-700">
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Proof Image -->
+      <div v-if="issue.proof_image_url" class="mb-4 overflow-hidden rounded-lg">
+        <img :src="issue.proof_image_url" alt="Resolution Proof" class="w-full object-cover" />
+      </div>
+
+      <!-- Proof Location -->
+      <div v-if="issue.proof_latitude && issue.proof_longitude" class="mb-4 rounded-lg bg-gray-50 p-4">
+        <h3 class="mb-2 font-semibold text-gray-900">📍 Resolution Location</h3>
+        <p class="text-sm text-gray-700">
+          <strong>Coordinates:</strong><br />
+          {{ issue.proof_latitude.toFixed(6) }}, {{ issue.proof_longitude.toFixed(6) }}
+        </p>
+      </div>
+
+      <!-- Close Button -->
+      <button
+        @click="showProofModal = false"
+        class="w-full rounded-lg bg-gray-200 px-4 py-2 font-semibold text-gray-800 hover:bg-gray-300"
+      >
+        Close
+      </button>
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -211,6 +258,7 @@ const isLoading = ref(false)
 const error = ref('')
 const isDeleting = ref(false)
 const selectedImage = ref(null)
+const showProofModal = ref(false)
 
 const canDeleteIssue = computed(() => {
   return authStore.user?.id === issue.value?.user_id

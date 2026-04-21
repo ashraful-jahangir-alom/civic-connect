@@ -1,7 +1,7 @@
 <template>
-  <div class="min-h-screen bg-cream-50 pb-12 text-slate-700">
+  <div class="min-h-screen pb-12 text-slate-700">
     <!-- Header -->
-    <div class="bg-gold-100/60 shadow-sm border-b border-gold-200/60">
+    <div class="bg-[#65CCB8] shadow-sm border-b border-gold-200/60">
       <div class="w-full px-4 py-6 sm:px-6 lg:px-8 xl:px-10">
         <h1 class="text-2xl font-bold text-slate-900">Manage Issues</h1>
         <p class="mt-1 text-sm text-slate-600">View and manage all reported issues.</p>
@@ -9,7 +9,7 @@
     </div>
 
     <!-- Main Content -->
-    <div class="mt-8 w-full px-4 sm:px-6 lg:px-8 xl:px-10">
+    <div class="w-full bg-[#65CCB8] px-4 sm:px-6 lg:px-8 xl:px-10">
       <!-- Filters & Search -->
       <div class="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div class="flex items-center gap-2">
@@ -120,7 +120,7 @@
             <tr
               v-for="issue in filteredIssues"
               :key="issue.id"
-              class="group transition-colors hover:bg-gold-50/40"
+              class="group transition-colors"
             >
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="flex items-center">

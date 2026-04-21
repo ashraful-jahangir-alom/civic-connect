@@ -1,6 +1,6 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-cream-50 to-cream-100 text-slate-800">
-    <div class="w-full px-4 py-8 sm:px-6 lg:px-8 xl:px-10">
+  <div class="w-full min-h-screen bg-[#65CCB8] text-slate-800">
+    <div class="bg-[#65CCB8] px-4 py-8 sm:px-6 lg:px-8 xl:px-10">
       <!-- Header -->
       <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -17,7 +17,7 @@
       </div>
 
       <!-- View Toggle and Filters -->
-      <div class="mb-8 rounded-xl bg-white/90 p-6 shadow-md backdrop-blur-sm border border-gold-200/50">
+      <div class="mb-8 rounded-xl bg-[linear-gradient(135deg,rgba(255,255,255,0.72),rgba(255,253,247,0.18))] p-6 shadow-md backdrop-blur-sm border border-gold-200/50">
         <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <!-- View Toggle -->
           <div class="flex gap-2">
@@ -125,7 +125,7 @@
           <div
             v-for="issue in filteredIssuesStore"
             :key="issue.id"
-            class="rounded-xl border-l-4 bg-white/90 p-6 shadow-md transition-shadow hover:shadow-lg backdrop-blur-sm"
+            class="rounded-xl border-l-4 bg-[linear-gradient(135deg,rgba(255,255,255,0.72),rgba(255,253,247,0.18))] p-6 shadow-md transition-shadow hover:shadow-lg backdrop-blur-sm"
             :class="{
               'border-gold-400': issue.status === 'pending_review',
               'border-saffron-500': issue.status === 'in_progress',
@@ -345,8 +345,8 @@ const showLocationButton = computed(() => locationPermissionState.value !== 'gra
 const hasUserLocation = computed(() => Boolean(userLocation.value))
 
 const getStatusColor = (status) => {
-  if (status === 'pending_review') return '#d4af37'
-  if (status === 'in_progress') return '#ff9933'
+  if (status === 'pending_review') return '#57BA98'
+  if (status === 'in_progress') return '#65CCB8'
   if (status === 'resolved') return '#22c55e'
   return '#ef4444'
 }

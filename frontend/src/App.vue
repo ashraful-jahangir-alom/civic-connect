@@ -22,7 +22,7 @@ const layout = computed(() => {
 
     <div class="app-main-layer">
       <component :is="layout">
-        <div class="app-page-host">
+        <div class="app-page-host  bg-[linear-gradient(135deg,rgba(255,255,255,0.72),rgba(255,253,247,0.18))]">
           <router-view />
         </div>
       </component>
@@ -36,10 +36,7 @@ const layout = computed(() => {
   position: relative;
   min-height: 100vh;
   overflow-x: clip;
-  background:
-    radial-gradient(circle at top left, rgba(212, 175, 55, 0.15), transparent 28%),
-    radial-gradient(circle at top right, rgba(255, 153, 51, 0.1), transparent 24%),
-    linear-gradient(180deg, #fffdf7 0%, #fffbf0 52%, #fff9f0 100%);
+  background:#65CCB8;
 }
 
 .app-theme-orb {
@@ -95,6 +92,7 @@ const layout = computed(() => {
 
 .app-page-host {
   min-height: 100%;
+  background-color: #65CCB8;
 }
 
 .app-page-host > * {

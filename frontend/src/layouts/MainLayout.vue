@@ -2,7 +2,7 @@
   <div class="bg-transparent flex min-h-screen flex-col font-sans">
     <!-- Navigation -->
     <nav
-      class="bg-gradient-to-r from-cream-50 to-cream-100 sticky top-0 z-50 border-b border-gold-200 shadow-md backdrop-blur-sm transition-all duration-300"
+      class="absolute bg-[#65CCB8] sticky top-0 z-50 border-b border-dark-200 shadow-md backdrop-blur-sm transition-all duration-300"
     >
       <div class="mx-auto w-full max-w-screen-2xl px-4 sm:px-6 lg:px-8">
         <div class="flex h-16 items-center justify-between">
@@ -18,8 +18,8 @@
             <template v-if="!authStore.isAuthenticated">
               <router-link
                 to="/"
-                active-class="text-gold-600 font-semibold"
-                class="text-text-light hover:text-gold-600 px-3 py-2 font-medium transition-colors duration-200"
+                active-class="text-dark-600 font-semibold"
+                class="text-text-light hover:text-dark-600 px-3 py-2 font-medium transition-colors duration-200"
                 >Home</router-link
               >
             </template>
@@ -30,26 +30,26 @@
               <template v-if="authStore.isAdmin">
                 <router-link
                   to="/admin/dashboard"
-                  active-class="text-gold-600 font-semibold"
-                  class="text-text-light hover:text-gold-600 px-3 py-2 font-medium transition-colors duration-200"
+                  active-class="text-dark-600 font-semibold"
+                  class="text-text-light hover:text-dark-600 px-3 py-2 font-medium transition-colors duration-200"
                   >Dashboard</router-link
                 >
                 <router-link
                   to="/admin/analytics"
-                  active-class="text-gold-600 font-semibold"
-                  class="text-text-light hover:text-gold-600 px-3 py-2 font-medium transition-colors duration-200"
+                  active-class="text-dark-600 font-semibold"
+                  class="text-text-light hover:text-dark-600 px-3 py-2 font-medium transition-colors duration-200"
                   >Analytics</router-link
                 >
                 <router-link
                   to="/admin/issues"
-                  active-class="text-gold-600 font-semibold"
-                  class="text-text-light hover:text-gold-600 px-3 py-2 font-medium transition-colors duration-200"
+                  active-class="text-dark-600 font-semibold"
+                  class="text-text-light hover:text-dark-600 px-3 py-2 font-medium transition-colors duration-200"
                   >Issues</router-link
                 >
                 <router-link
                   to="/issues-map"
-                  active-class="text-gold-600 font-semibold"
-                  class="text-text-light hover:text-gold-600 px-3 py-2 font-medium transition-colors duration-200"
+                  active-class="text-dark-600 font-semibold"
+                  class="text-text-light hover:text-dark-600 px-3 py-2 font-medium transition-colors duration-200"
                   >Map</router-link
                 >
               </template>
@@ -57,20 +57,20 @@
               <template v-else-if="authStore.isCitizen">
                 <router-link
                   :to="dashboardRoute"
-                  active-class="text-gold-600 font-semibold"
-                  class="text-text-light hover:text-gold-600 px-3 py-2 font-medium transition-colors duration-200"
+                  active-class="text-dark-600 font-semibold"
+                  class="rounded-full border border-dark-200/80 bg-dark-50/90 text-text-dark hover:text-dark-600 px-3 py-2 font-medium transition-colors duration-200"
                   >Dashboard</router-link
                 >
                 <router-link
                   to="/issues"
-                  active-class="text-gold-600 font-semibold"
-                  class="text-text-light hover:text-gold-600 px-3 py-2 font-medium transition-colors duration-200"
+                  active-class="text-dark-600 font-semibold"
+                  class="rounded-full border border-dark-200/80 bg-dark-50/90 text-text-dark hover:text-dark-600 px-3 py-2 font-medium transition-colors duration-200"
                   >Issues</router-link
                 >
                 <router-link
                   to="/issues-map"
-                  active-class="text-gold-600 font-semibold"
-                  class="text-text-light hover:text-gold-600 px-3 py-2 font-medium transition-colors duration-200"
+                  active-class="text-dark-600 font-semibold"
+                  class="rounded-full border border-dark-200/80 bg-dark-50/90 text-text-dark hover:text-dark-600 px-3 py-2 font-medium transition-colors duration-200"
                   >Map</router-link
                 >
               </template>
@@ -79,20 +79,20 @@
               <template v-if="authStore.isStaff">
                 <router-link
                   to="/staff/dashboard"
-                  active-class="text-gold-600 font-semibold"
-                  class="text-text-light hover:text-gold-600 px-3 py-2 font-medium transition-colors duration-200"
+                  active-class="text-dark-600 font-semibold"
+                  class=" text-text-dark hover:text-dark-600 px-3 py-2 font-medium transition-colors duration-200"
                   >Staff Dashboard</router-link
                 >
                 <router-link
                   to="/staff/issues"
-                  active-class="text-gold-600 font-semibold"
-                  class="text-text-light hover:text-gold-600 px-3 py-2 font-medium transition-colors duration-200"
+                  active-class="text-dark-600 font-semibold"
+                  class="text-text-dark hover:text-dark-600 px-3 py-2 font-medium transition-colors duration-200"
                   >Manage Issues</router-link
                 >
                 <router-link
                   to="/staff/reports"
-                  active-class="text-gold-600 font-semibold"
-                  class="text-text-light hover:text-gold-600 px-3 py-2 font-medium transition-colors duration-200"
+                  active-class="text-dark-600 font-semibold"
+                  class="text-text-dark hover:text-dark-600 px-3 py-2 font-medium transition-colors duration-200"
                   >Reports</router-link
                 >
               </template>
@@ -103,27 +103,27 @@
               <!-- Profile Dropdown -->
               <div class="group relative">
                 <button
-                  class="text-text hover:text-gold-600 flex items-center gap-2 font-medium transition-colors"
+                  class="text-text hover:text-dark-600 flex items-center gap-2 font-medium transition-colors"
                 >
                   <span
-                    class="bg-gradient-to-r from-gold-200 to-gold-300 text-gold-700 rounded-full px-3 py-1 text-sm font-bold"
+                    class="bg-gradient-to-r from-dark-200 to-dark-300 text-dark-700 rounded-full px-3 py-1 text-sm font-bold"
                   >
                     {{ userInitials }}
                   </span>
                 </button>
                 <div
-                  class="invisible absolute right-0 z-50 mt-2 w-48 origin-top-right transform rounded-xl border border-gold-200 bg-cream-50 py-1 opacity-0 shadow-lg transition-all duration-200 group-hover:visible group-hover:opacity-100"
+                  class="invisible absolute right-0 z-50 mt-2 w-48 origin-top-right transform rounded-xl border border-dark-200 bg-cream-50 py-1 opacity-0 shadow-lg transition-all duration-200 group-hover:visible group-hover:opacity-100"
                 >
                   <router-link
                     to="/profile"
-                    class="text-text hover:text-gold-600 block px-4 py-2 text-sm hover:bg-gold-100 transition-colors"
+                    class="text-text hover:text-dark-600 block px-4 py-2 text-sm hover:bg-dark-100 transition-colors"
                     >Profile</router-link
                   >
                   <!-- Citizen Specific Links -->
                   <template v-if="authStore.isCitizen">
                     <router-link
                       to="/my-issues"
-                      class="text-text hover:text-gold-600 block px-4 py-2 text-sm hover:bg-gold-100 transition-colors"
+                      class="text-text hover:text-dark-600 block px-4 py-2 text-sm hover:bg-dark-100 transition-colors"
                       >My Issues</router-link
                     >
                   </template>
@@ -142,7 +142,7 @@
               <div class="flex items-center gap-3">
                 <router-link
                   to="/login"
-                  class="text-gold-600 hover:text-gold-700 px-4 py-2 font-semibold transition-colors"
+                  class="text-dark-600 hover:text-dark-700 px-4 py-2 font-semibold transition-colors"
                   >Sign In</router-link
                 >
                 <router-link
@@ -159,7 +159,7 @@
             <NotificationBell v-if="authStore.isAuthenticated" />
             <button
               @click="mobileMenuOpen = !mobileMenuOpen"
-              class="text-text rounded-lg p-2 transition-colors hover:bg-gold-100"
+              class="text-text rounded-lg p-2 transition-colors hover:bg-dark-100"
             >
               <Bars3Icon class="h-6 w-6" />
             </button>
@@ -170,15 +170,15 @@
       <!-- Mobile Menu -->
       <div
         v-if="mobileMenuOpen"
-        class="absolute left-0 z-40 w-full border-t border-gold-200 bg-cream-50 shadow-lg md:hidden"
+        class="absolute left-0 z-40 w-full border-t border-dark-200 bg-cream-50 shadow-lg md:hidden"
       >
         <div class="space-y-1 px-4 pt-2 pb-6">
           <template v-if="authStore.isAuthenticated">
             <router-link
               v-if="authStore.isCitizen"
               :to="dashboardRoute"
-              active-class="text-gold-600 font-semibold"
-              class="text-text hover:text-gold-600 block rounded-lg px-3 py-3 text-base font-medium hover:bg-gold-100 transition-colors"
+              active-class="text-dark-600 font-semibold"
+              class="text-text hover:text-dark-600 block rounded-lg px-3 py-3 text-base font-medium hover:bg-dark-100 transition-colors"
               @click="mobileMenuOpen = false"
               >Dashboard</router-link
             >
@@ -187,15 +187,15 @@
             <template v-if="authStore.isCitizen">
               <router-link
                 to="/issues"
-                active-class="text-gold-600 font-semibold"
-                class="text-text hover:text-gold-600 block rounded-lg px-3 py-3 text-base font-medium hover:bg-gold-100 transition-colors"
+                active-class="text-dark-600 font-semibold"
+                class="text-text hover:text-dark-600 block rounded-lg px-3 py-3 text-base font-medium hover:bg-dark-100 transition-colors"
                 @click="mobileMenuOpen = false"
                 >Issues</router-link
               >
               <router-link
                 to="/my-issues"
-                active-class="text-gold-600 font-semibold"
-                class="text-text hover:text-gold-600 block rounded-lg px-3 py-3 text-base font-medium hover:bg-gold-100 transition-colors"
+                active-class="text-dark-600 font-semibold"
+                class="text-text hover:text-dark-600 block rounded-lg px-3 py-3 text-base font-medium hover:bg-dark-100 transition-colors"
                 @click="mobileMenuOpen = false"
                 >My Issues</router-link
               >
@@ -205,15 +205,15 @@
             <template v-if="authStore.isAdmin">
               <router-link
                 to="/admin/dashboard"
-                active-class="text-gold-600 font-semibold"
-                class="text-text hover:text-gold-600 block rounded-lg px-3 py-3 text-base font-medium hover:bg-gold-100 transition-colors"
+                active-class="text-dark-600 font-semibold"
+                class="text-text hover:text-dark-600 block rounded-lg px-3 py-3 text-base font-medium hover:bg-dark-100 transition-colors"
                 @click="mobileMenuOpen = false"
                 >Dashboard</router-link
               >
               <router-link
                 to="/admin/analytics"
-                active-class="text-gold-600 font-semibold"
-                class="text-text hover:text-gold-600 block rounded-lg px-3 py-3 text-base font-medium hover:bg-gold-100 transition-colors"
+                active-class="text-dark-600 font-semibold"
+                class="text-text hover:text-dark-600 block rounded-lg px-3 py-3 text-base font-medium hover:bg-dark-100 transition-colors"
                 @click="mobileMenuOpen = false"
                 >Analytics</router-link
               >
@@ -223,22 +223,22 @@
             <template v-if="authStore.isStaff">
               <router-link
                 to="/staff/dashboard"
-                active-class="text-gold-600 font-semibold"
-                class="text-text hover:text-gold-600 block rounded-lg px-3 py-3 text-base font-medium hover:bg-gold-100 transition-colors"
+                active-class="text-dark-600 font-semibold"
+                class="text-text hover:text-dark-600 block rounded-lg px-3 py-3 text-base font-medium hover:bg-dark-100 transition-colors"
                 @click="mobileMenuOpen = false"
                 >Staff Dashboard</router-link
               >
               <router-link
                 to="/staff/issues"
-                active-class="text-gold-600 font-semibold"
-                class="text-text hover:text-gold-600 block rounded-lg px-3 py-3 text-base font-medium hover:bg-gold-100 transition-colors"
+                active-class="text-dark-600 font-semibold"
+                class="text-text hover:text-dark-600 block rounded-lg px-3 py-3 text-base font-medium hover:bg-dark-100 transition-colors"
                 @click="mobileMenuOpen = false"
                 >Manage Issues</router-link
               >
               <router-link
                 to="/staff/reports"
-                active-class="text-gold-600 font-semibold"
-                class="text-text hover:text-gold-600 block rounded-lg px-3 py-3 text-base font-medium hover:bg-gold-100 transition-colors"
+                active-class="text-dark-600 font-semibold"
+                class="text-text hover:text-dark-600 block rounded-lg px-3 py-3 text-base font-medium hover:bg-dark-100 transition-colors"
                 @click="mobileMenuOpen = false"
                 >Reports</router-link
               >
@@ -254,13 +254,13 @@
           <template v-else>
             <router-link
               to="/login"
-              class="text-text hover:text-gold-600 block rounded-lg px-3 py-3 text-base font-medium hover:bg-gold-100 transition-colors"
+              class="text-text hover:text-dark-600 block rounded-lg px-3 py-3 text-base font-medium hover:bg-dark-100 transition-colors"
               @click="mobileMenuOpen = false"
               >Sign In</router-link
             >
             <router-link
               to="/register"
-              class="text-white bg-gradient-to-r from-gold-400 to-gold-600 block rounded-lg px-3 py-3 text-base font-medium transition-colors"
+              class="text-white bg-gradient-to-r from-dark-400 to-dark-600 block rounded-lg px-3 py-3 text-base font-medium transition-colors"
               @click="mobileMenuOpen = false"
               >Get Started</router-link
             >
@@ -275,7 +275,7 @@
     </main>
 
     <!-- Footer -->
-    <footer class="mt-auto border-t border-gold-200 bg-gradient-to-r from-cream-50 to-cream-100 py-6">
+    <footer class="mt-auto border-t border-dark-200 bg-[#65CCB8] py-6">
       <div
         class="mx-auto flex w-full max-w-screen-2xl flex-col items-center justify-between gap-6 px-4 sm:px-6 md:flex-row lg:px-8"
       >
@@ -293,7 +293,7 @@
           <!-- GitHub -->
           <a
             href="https://github.com/DevFusionOrg"
-            class="text-text-lighter hover:text-gold-600 transition-colors"
+            class="text-text-lighter hover:text-dark-600 transition-colors"
           >
             <span class="sr-only">GitHub</span>
             <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">

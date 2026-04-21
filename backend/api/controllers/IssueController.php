@@ -861,5 +861,134 @@ class IssueController {
             sendError('Failed to fetch user issues: ' . $e->getMessage(), 500);
         }
     }
+/**
+     * Resolve an issue with proof (photo + location)
+     * POST /api/issues/{id}/resolve
+     */
+    public function resolve($issue_id) {
+        if (!Middleware::validateMethod('POST')) {
+            sendError('Method not allowed', 405);
+        }
+
+        $user = Middleware::requireAuth();
+
+        // Only staff and admins can resolve issues
+        $stmt = $this->pdo->prepare("SELECT role FROM users WHERE id = ?");
+        $stmt->execute([$user['user_id']]);
+        $user_role = $stmt->fetchColumn();
+
+        if (!in_array($user_role, ['staff', 'admin'])) {
+            sendError('Unauthorized: Only staff and admins can resolve issues', 403);
+        }
+
+        try {
+            // Check issue exists
+            $stmt = $this->pdo->prepare("SELECT * FROM issues WHERE id = ?");
+            $stmt->execute([$issue_id]);
+            $issue = $stmt->fetch();
+
+            if (!$issue) {
+                sendError('Issue not found', 404);
+            }
+
+            // Handle proof image upload
+            $proof_image_path = null;
+            if (isset($_FILES['proofImage']) && $_FILES['proofImage']['error'] !== UPLOAD_ERR_NO_FILE) {
+                if ($_FILES['proofImage']['error'] !== UPLOAD_ERR_OK) {
+                    sendError('Proof image upload failed', 400);
+                }
+
+                $upload_result = uploadIssueImage($_FILES['proofImage']);
+                if (!$upload_result['success']) {
+                    sendError($upload_result['error'], 400);
+                }
+
+                $proof_image_path = $upload_result['path'];
+            }
+
+            // Get proof coordinates from request (FormData sends as POST variables)
+            $proof_latitude = isset($_POST['latitude']) && $_POST['latitude'] !== '' ? (float)$_POST['latitude'] : null;
+            $proof_longitude = isset($_POST['longitude']) && $_POST['longitude'] !== '' ? (float)$_POST['longitude'] : null;
+
+            if ($proof_image_path || ($proof_latitude !== null && $proof_longitude !== null)) {
+                // At least one proof element (image or coordinates) is required
+                // Update issue with proof and status
+                $stmt = $this->pdo->prepare("
+                    UPDATE issues
+                    SET status = 'resolved',
+                        resolved_at = NOW(),
+                        resolved_by = ?,
+                        proof_image_path = COALESCE(?, proof_image_path),
+                        proof_latitude = COALESCE(?, proof_latitude),
+                        proof_longitude = COALESCE(?, proof_longitude)
+                    WHERE id = ?
+                ");
+
+                $stmt->execute([
+                    $user['user_id'],
+                    $proof_image_path,
+                    $proof_latitude,
+                    $proof_longitude,
+                    $issue_id
+                ]);
+
+                // Log audit trail
+                Middleware::logAuditTrail(
+                    $user['user_id'],
+                    'ISSUE_RESOLVED',
+                    'issues',
+                    $issue_id,
+                    ['status' => $issue['status']],
+                    ['status' => 'resolved', 'resolved_by' => $user['user_id']]
+                );
+
+                // Fetch and return updated issue
+                $stmt = $this->pdo->prepare("SELECT * FROM issues WHERE id = ?");
+                $stmt->execute([$issue_id]);
+                $updated_issue = $stmt->fetch();
+
+                if ($updated_issue) {
+                    if (!empty($updated_issue['image_path'])) {
+                        $updated_issue['image_url'] = 'http://localhost/civic-connect/backend/' . $updated_issue['image_path'];
+                    } else {
+                        $updated_issue['image_url'] = null;
+                    }
+
+                    if (!empty($updated_issue['proof_image_path'])) {
+                        $updated_issue['proof_image_url'] = 'http://localhost/civic-connect/backend/' . $updated_issue['proof_image_path'];
+                    } else {
+                        $updated_issue['proof_image_url'] = null;
+                    }
+
+                    // Cast numeric types
+                    if ($updated_issue['latitude']) {
+                        $updated_issue['latitude'] = (float)$updated_issue['latitude'];
+                    }
+                    if ($updated_issue['longitude']) {
+                        $updated_issue['longitude'] = (float)$updated_issue['longitude'];
+                    }
+                    if ($updated_issue['proof_latitude']) {
+                        $updated_issue['proof_latitude'] = (float)$updated_issue['proof_latitude'];
+                    }
+                    if ($updated_issue['proof_longitude']) {
+                        $updated_issue['proof_longitude'] = (float)$updated_issue['proof_longitude'];
+                    }
+                    $updated_issue['upvote_count'] = (int)$updated_issue['upvote_count'];
+
+                    sendResponse([
+                        'success' => true,
+                        'message' => 'Issue resolved successfully with proof',
+                        'issue' => $updated_issue
+                    ], 200);
+                } else {
+                    sendError('Failed to retrieve updated issue', 500);
+                }
+            } else {
+                sendError('Proof image or coordinates are required', 400);
+            }
+        } catch (PDOException $e) {
+            sendError('Failed to resolve issue: ' . $e->getMessage(), 500);
+        }
+    }
 }
 ?>

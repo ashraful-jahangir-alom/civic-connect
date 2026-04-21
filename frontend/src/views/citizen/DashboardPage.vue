@@ -6,9 +6,9 @@
       <div class="dashboard-orb absolute bottom-0 left-1/3 h-72 w-72 rounded-full bg-gold-200/15 blur-3xl"></div>
     </div>
 
-    <div class="relative w-full px-4 py-6 sm:px-6 lg:px-8 xl:px-10 2xl:px-12">
+    <div class="relative inset-0 bg-[#65CCB8] w-full px-4 py-6 sm:px-6 lg:px-8 xl:px-10 2xl:px-12">
       <section
-        class="dashboard-hero relative overflow-hidden rounded-[2rem] border border-gold-200/70 bg-gradient-to-br from-cream-50/80 to-cream-100/80 p-6 shadow-[0_24px_90px_rgba(212,175,55,0.12)] backdrop-blur-2xl sm:p-8"
+        class="dashboard-hero relative overflow-hidden rounded-[2rem] border border-gold-200/70 bg-gradient-to-br from-gold-100/10 to-gold-100/10 p-6 shadow-[0_24px_90px_rgba(87,186,152,0.18)] backdrop-blur-2xl sm:p-8"
       >
         <div class="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.72),rgba(255,253,247,0.18))]"></div>
         <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold-200 to-transparent"></div>
@@ -44,8 +44,8 @@
             </div>
           </div>
 
-          <div class="dashboard-glass-panel relative overflow-hidden rounded-[1.75rem] border border-gold-200/70 bg-white/55 p-5 shadow-[0_20px_60px_rgba(212,175,55,0.12)] backdrop-blur-2xl">
-            <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(212,175,55,0.45),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(255,245,214,0.5),transparent_35%)]"></div>
+          <div class="dashboard-glass-panel relative overflow-hidden rounded-[1.75rem] border border-gold-200/70 bg-white/55 p-5 shadow-[0_20px_60px_rgba(87,186,152,0.16)] backdrop-blur-2xl">
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(87,186,152,0.42),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(242,242,242,0.6),transparent_35%)]"></div>
             <div class="relative space-y-4">
               <div class="flex items-center justify-between">
                 <div>
@@ -120,7 +120,7 @@
       </section>
 
       <section class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <div class="dashboard-card rounded-[1.5rem] border border-gold-200/70 bg-white/55 p-6 shadow-[0_18px_60px_rgba(212,175,55,0.08)] backdrop-blur-2xl">
+        <div class="dashboard-card rounded-[1.5rem] border border-gold-200/70 bg-white/55 p-6 shadow-[0_18px_60px_rgba(87,186,152,0.14)] backdrop-blur-2xl">
           <div class="flex items-start justify-between gap-4">
             <div>
               <p class="text-xs font-semibold uppercase tracking-[0.22em] text-gold-700">My Issues</p>
@@ -140,7 +140,7 @@
           </router-link>
         </div>
 
-        <div class="dashboard-card rounded-[1.5rem] border border-gold-200/70 bg-white/55 p-6 shadow-[0_18px_60px_rgba(212,175,55,0.08)] backdrop-blur-2xl">
+        <div class="dashboard-card rounded-[1.5rem] border border-gold-200/70 bg-white/55 p-6 shadow-[0_18px_60px_rgba(87,186,152,0.14)] backdrop-blur-2xl">
           <div class="flex items-start justify-between gap-4">
             <div>
               <p class="text-xs font-semibold uppercase tracking-[0.22em] text-saffron-600">Resolved</p>
@@ -153,7 +153,7 @@
           </div>
         </div>
 
-        <div class="dashboard-card rounded-[1.5rem] border border-gold-200/70 bg-white/55 p-6 shadow-[0_18px_60px_rgba(212,175,55,0.08)] backdrop-blur-2xl">
+        <div class="dashboard-card rounded-[1.5rem] border border-gold-200/70 bg-white/55 p-6 shadow-[0_18px_60px_rgba(87,186,152,0.14)] backdrop-blur-2xl">
           <div class="flex items-start justify-between gap-4">
             <div>
               <p class="text-xs font-semibold uppercase tracking-[0.22em] text-gold-700">Upvotes</p>
@@ -166,7 +166,7 @@
           </div>
         </div>
 
-        <div class="dashboard-card rounded-[1.5rem] border border-gold-200/70 bg-white/55 p-6 shadow-[0_18px_60px_rgba(212,175,55,0.08)] backdrop-blur-2xl">
+        <div class="dashboard-card rounded-[1.5rem] border border-gold-200/70 bg-white/55 p-6 shadow-[0_18px_60px_rgba(87,186,152,0.14)] backdrop-blur-2xl">
           <div class="flex items-start justify-between gap-4">
             <div>
               <p class="text-xs font-semibold uppercase tracking-[0.22em] text-saffron-600">Community</p>
@@ -183,7 +183,7 @@
       <section class="mt-6 grid grid-cols-1 gap-4 xl:grid-cols-2">
         <router-link
           to="/report-issue"
-          class="dashboard-action group relative overflow-hidden rounded-[1.75rem] border border-gold-300/70 bg-gradient-to-br from-gold-500 via-gold-400 to-saffron-500 p-7 text-white shadow-[0_24px_70px_rgba(212,175,55,0.24)] transition-transform hover:-translate-y-1"
+          class="dashboard-action group relative overflow-hidden rounded-[1.75rem] border border-gold-300/70 bg-gradient-to-br from-gold-500 via-gold-400 to-saffron-500 p-7 text-white shadow-[0_24px_70px_rgba(87,186,152,0.28)] transition-transform hover:-translate-y-1"
         >
           <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.18),transparent_30%)]"></div>
           <div class="relative flex items-center gap-4">
@@ -199,9 +199,9 @@
 
         <router-link
           to="/issues"
-          class="dashboard-action group relative overflow-hidden rounded-[1.75rem] border border-gold-200/70 bg-white/60 p-7 shadow-[0_18px_60px_rgba(212,175,55,0.10)] backdrop-blur-2xl transition-transform hover:-translate-y-1"
+          class="dashboard-action group relative overflow-hidden rounded-[1.75rem] border border-gold-200/70 bg-white/60 p-7 shadow-[0_18px_60px_rgba(87,186,152,0.16)] backdrop-blur-2xl transition-transform hover:-translate-y-1"
         >
-          <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(212,175,55,0.45),transparent_32%)]"></div>
+          <div class="absolute inset-0 bg-[#]"></div>
           <div class="relative flex items-center gap-4">
             <div class="rounded-2xl bg-gold-100/90 p-3 text-gold-700">
               <ListBulletIcon class="h-8 w-8" />
@@ -217,7 +217,7 @@
       </section>
 
       <section class="mt-6 grid grid-cols-1 gap-6 2xl:grid-cols-12">
-        <div class="dashboard-panel 2xl:col-span-7 rounded-[1.75rem] border border-gold-200/70 bg-white/55 shadow-[0_18px_60px_rgba(212,175,55,0.08)] backdrop-blur-2xl">
+        <div class="dashboard-panel 2xl:col-span-7 rounded-[1.75rem] border border-gold-200/70 bg-white/55 shadow-[0_18px_60px_rgba(87,186,152,0.14)] backdrop-blur-2xl">
           <div class="flex items-center justify-between border-b border-gold-100/80 px-6 py-5">
             <div>
               <h2 class="text-2xl font-bold text-slate-900">Recent Community Issues</h2>
@@ -282,7 +282,7 @@
           </div>
         </div>
 
-        <div class="dashboard-panel dashboard-my-reports 2xl:col-span-5 rounded-[1.75rem] border border-gold-200/70 bg-white/55 shadow-[0_18px_60px_rgba(212,175,55,0.08)] backdrop-blur-2xl">
+        <div class="dashboard-panel dashboard-my-reports 2xl:col-span-5 rounded-[1.75rem] border border-gold-200/70 bg-white/55 shadow-[0_18px_60px_rgba(87,186,152,0.14)] backdrop-blur-2xl">
           <div class="border-b border-gold-100/80 px-6 py-5">
             <h2 class="text-2xl font-bold text-slate-900">My Reports</h2>
             <p class="mt-1 text-sm text-slate-600">A quick view of your latest submissions</p>

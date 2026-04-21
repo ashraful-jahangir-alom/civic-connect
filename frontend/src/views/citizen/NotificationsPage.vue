@@ -1,6 +1,6 @@
 <template>
-  <div class="min-h-screen bg-cream-50">
-    <div class="bg-white shadow">
+  <div class="bg-[#65CCB8]">
+    <div class="bg-[#65CCB8]">
       <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         <h1 class="text-2xl font-bold text-slate-900">Notifications</h1>
       </div>
@@ -56,7 +56,7 @@
 
       <div
         v-else-if="notifications.length === 0"
-        class="rounded-lg bg-white p-12 text-center shadow"
+        class="rounded-lg  bg-[linear-gradient(135deg,rgba(255,255,255,0.72),rgba(255,253,247,0.18))] p-12 text-center shadow"
       >
         <BellIcon class="mx-auto mb-4 h-16 w-16 text-slate-400" />
         <h3 class="mb-2 text-lg font-medium text-slate-900">No notifications</h3>
@@ -69,7 +69,7 @@
           :key="notification.id"
           :to="`/issues/${notification.issue_id}`"
           @click="markAsRead(notification.id)"
-          class="block rounded-lg bg-white p-5 shadow transition-all hover:shadow-md"
+          class="block rounded-lg  bg-[linear-gradient(135deg,rgba(255,255,255,0.72),rgba(255,253,247,0.18))] p-5 shadow transition-all hover:shadow-md"
           :class="{ 'border-l-4 border-gold-600': !notification.is_read }"
         >
           <div class="flex items-start justify-between gap-4">

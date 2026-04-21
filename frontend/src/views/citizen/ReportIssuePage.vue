@@ -20,7 +20,7 @@
     </div>
 
     <!-- Form Card -->
-    <div class="shadow-soft overflow-hidden rounded-2xl border border-gold-200/50 bg-white backdrop-blur-sm">
+    <div class="shadow-soft overflow-hidden rounded-2xl border border-gold-200/50 bg-[linear-gradient(135deg,rgba(255,255,255,0.72),rgba(255,253,247,0.18))] backdrop-blur-sm">
       <form @submit.prevent="submitIssue" class="space-y-8 p-6 md:p-8">
         <!-- Section: Category -->
         <section>
@@ -160,6 +160,50 @@
               >
               Add a photo
             </h3>
+            <!-- Camera UI -->
+            <div v-if="!form.image && !capturedImage" class="mb-4">
+              <video
+                v-show="showVideo"
+                ref="video"
+                class="rounded-lg border border-gray-200 w-full max-w-xs aspect-video bg-black mb-2"
+                autoplay
+                playsinline
+                muted
+              ></video>
+              <canvas ref="canvas" class="hidden"></canvas>
+
+              <div class="flex flex-wrap gap-2 justify-center mb-2">
+                <button
+                  type="button"
+                  class="bg-primary hover:bg-primary/90 text-white rounded-full px-4 py-2 text-sm font-semibold shadow transition disabled:opacity-60 disabled:cursor-not-allowed"
+                  @click.stop="startCamera"
+                  :disabled="isCameraActive"
+                >
+                  <span v-if="!isCameraActive">📷 Start Camera</span>
+                  <span v-else>✓ Camera Active</span>
+                </button>
+                <button
+                  type="button"
+                  class="bg-success hover:bg-success/90 text-white rounded-full px-4 py-2 text-sm font-semibold shadow transition disabled:opacity-60 disabled:cursor-not-allowed"
+                  @click.stop="capturePhoto"
+                  :disabled="!isCameraActive"
+                >
+                  📸 Capture
+                </button>
+                <button
+                  v-if="isCameraActive"
+                  type="button"
+                  class="bg-danger hover:bg-danger/90 text-white rounded-full px-4 py-2 text-sm font-semibold shadow transition"
+                  @click.stop="stopCamera"
+                >
+                  ⏹ Stop
+                </button>
+              </div>
+
+              <p v-if="cameraError" class="text-danger text-sm font-medium">{{ cameraError }}</p>
+            </div>
+
+            <!-- File Upload Zone -->
             <div
               class="hover:border-gold-300 group relative flex h-[calc(100%-3rem)] cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-gold-200 bg-cream-50 p-6 text-center transition-all hover:bg-white"
               @dragover.prevent
@@ -174,22 +218,21 @@
                 @change="handleFileSelect"
               />
 
-              <div v-if="!form.image" class="pointer-events-none flex flex-col items-center">
-                <div
-                  class="mb-3 rounded-full bg-white p-3 shadow-sm transition-transform group-hover:scale-110"
-                >
+              <!-- Upload UI or Preview -->
+              <div v-if="!form.image && !capturedImage" class="pointer-events-none flex flex-col items-center mt-4">
+                <div class="mb-3 rounded-full bg-white p-3 shadow-sm transition-transform group-hover:scale-110">
                   <PhotoIcon class="text-gold-600 h-8 w-8" />
                 </div>
                 <p class="text-slate-900 text-sm font-semibold">Click to upload or drag & drop</p>
                 <p class="text-slate-600 mt-1 text-xs">JPG, PNG, GIF up to 5MB</p>
               </div>
 
-              <div v-else class="flex w-full flex-col items-center">
+              <div v-else class="flex w-full flex-col items-center gap-3">
                 <div
-                  v-if="imagePreview"
+                  v-if="imagePreview || capturedImage"
                   class="relative mb-3 h-48 w-full overflow-hidden rounded-lg shadow-sm"
                 >
-                  <img :src="imagePreview" class="h-full w-full object-cover" />
+                  <img :src="imagePreview || capturedImage" class="h-full w-full object-cover" />
                   <button
                     @click.stop="removeImage"
                     class="text-red-600 absolute top-2 right-2 rounded-full bg-white/90 p-1.5 shadow-sm transition-colors hover:bg-white"
@@ -197,10 +240,23 @@
                     <TrashIcon class="h-4 w-4" />
                   </button>
                 </div>
-                <p class="text-green-600 mb-2 flex items-center text-sm font-semibold">
-                  <CheckCircleIcon class="mr-1 h-5 w-5" />
-                  {{ form.image.name }}
-                </p>
+                <div class="text-center">
+                  <p v-if="form.image" class="text-success flex items-center justify-center text-sm font-semibold">
+                    <CheckCircleIcon class="mr-1 h-5 w-5" />
+                    {{ form.image.name }}
+                  </p>
+                  <p v-else-if="capturedImage" class="text-success flex items-center justify-center text-sm font-semibold">
+                    <CheckCircleIcon class="mr-1 h-5 w-5" />
+                    Photo captured successfully
+                  </p>
+                  <button
+                    type="button"
+                    @click.stop="removeImage"
+                    class="text-primary mt-2 text-xs hover:underline font-medium"
+                  >
+                    Change photo
+                  </button>
+                </div>
                 <p v-if="isRunningAiDetection" class="mb-2 text-xs font-medium text-gold-700">
                   Running AI detection...
                 </p>
@@ -489,6 +545,16 @@ const hasLocationPermission = ref(false)
 const isLocating = ref(false)
 const currentLocation = ref(null)
 const PROXIMITY_RADIUS_METERS = 300
+
+// Camera refs
+const video = ref(null)
+const canvas = ref(null)
+const isCameraActive = ref(false)
+const showVideo = ref(false)
+const cameraStream = ref(null)
+const capturedImage = ref(null)
+const cameraError = ref('')
+
 let map = null
 let marker = null
 let currentLocationMarker = null
@@ -628,6 +694,7 @@ const runAiDetection = async (file) => {
 const removeImage = () => {
   form.value.image = null
   imagePreview.value = null
+  capturedImage.value = null
   resetAiResult()
   if (fileInput.value) {
     fileInput.value.value = ''
@@ -704,6 +771,69 @@ const isPointNearCurrentLocation = (lat, lng) => {
   )
 
   return distanceInMeters <= PROXIMITY_RADIUS_METERS
+}
+
+// Start camera
+const startCamera = async () => {
+  cameraError.value = ''
+  capturedImage.value = null
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: 'environment',
+        width: { ideal: 1280 },
+        height: { ideal: 720 }
+      }
+    })
+    cameraStream.value = stream
+    if (video.value) {
+      video.value.srcObject = stream
+      showVideo.value = true
+      isCameraActive.value = true
+      await nextTick()
+      video.value.play()
+    }
+  } catch (err) {
+    if (err.name === 'NotAllowedError') {
+      cameraError.value = 'Camera permission denied. Please allow access in your browser settings.'
+    } else if (err.name === 'NotFoundError') {
+      cameraError.value = 'No camera device found on your device.'
+    } else {
+      cameraError.value = 'Camera access error: ' + err.message
+    }
+    isCameraActive.value = false
+    showVideo.value = false
+  }
+}
+
+// Capture photo
+const capturePhoto = () => {
+  if (!video.value || !canvas.value) return
+  const width = video.value.videoWidth
+  const height = video.value.videoHeight
+  canvas.value.width = width
+  canvas.value.height = height
+  const ctx = canvas.value.getContext('2d')
+  ctx.drawImage(video.value, 0, 0, width, height)
+  capturedImage.value = canvas.value.toDataURL('image/png')
+
+  // Convert to File object for form submission
+  canvas.value.toBlob((blob) => {
+    const file = new File([blob], 'captured-photo.png', { type: 'image/png' })
+    form.value.image = file
+  }, 'image/png')
+
+  stopCamera()
+}
+
+// Stop camera
+const stopCamera = () => {
+  if (cameraStream.value) {
+    cameraStream.value.getTracks().forEach(track => track.stop())
+    cameraStream.value = null
+  }
+  isCameraActive.value = false
+  showVideo.value = false
 }
 
 const rankAndFilterSuggestions = (results, query) => {
@@ -1080,6 +1210,7 @@ const submitIssue = async () => {
 }
 
 onBeforeUnmount(() => {
+  stopCamera()
   if (locationSearchTimeout) {
     clearTimeout(locationSearchTimeout)
   }

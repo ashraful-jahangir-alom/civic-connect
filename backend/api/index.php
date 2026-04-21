@@ -294,6 +294,13 @@ function handleIssueRoutes($parts, $method) {
                     } else {
                         sendError('Method not allowed', 405);
                     }
+                } elseif ($sub_action === 'resolve') {
+                    // POST /issues/{id}/resolve - Submit resolution proof
+                    if ($method === 'POST') {
+                        $controller->resolve($issue_id);
+                    } else {
+                        sendError('Method not allowed', 405);
+                    }
                 } else {
                     sendError('Invalid endpoint', 404);
                 }

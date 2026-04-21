@@ -3,7 +3,7 @@
     class="relative flex min-h-screen flex-col items-center justify-center overflow-hidden p-4"
   >
     <div
-      class="shadow-primary/5 animate-fade-in-up relative z-10 w-full max-w-lg rounded-2xl border border-gray-100 bg-white p-8 shadow-xl"
+      class="shadow-primary/5 animate-fade-in-up relative z-10 w-full max-w-lg rounded-2xl border border-gray-100  bg-[linear-gradient(135deg,rgba(255,255,255,0.72),rgba(255,253,247,0.18))] p-8 shadow-xl"
     >
       <!-- Page content -->
       <slot></slot>
